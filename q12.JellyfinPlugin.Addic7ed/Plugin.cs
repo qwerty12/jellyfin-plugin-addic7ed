@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Jellyfin.Plugin.Template.Configuration;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Plugins;
 using MediaBrowser.Model.Plugins;
 using MediaBrowser.Model.Serialization;
+using q12.JellyfinPlugin.Addic7ed.Configuration;
 
-namespace Jellyfin.Plugin.Template;
+namespace q12.JellyfinPlugin.Addic7ed;
 
 /// <summary>
 /// The main plugin.
@@ -23,13 +23,16 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
         : base(applicationPaths, xmlSerializer)
     {
         Instance = this;
+        ApplicationPaths = applicationPaths;
     }
 
-    /// <inheritdoc />
-    public override string Name => "Template";
+    public static new IApplicationPaths ApplicationPaths { get; private set; }
 
     /// <inheritdoc />
-    public override Guid Id => Guid.Parse("eb5d7894-8eef-4b36-aa6f-5d124e828ce1");
+    public override string Name => "Addic7ed";
+
+    /// <inheritdoc />
+    public override Guid Id => Guid.Parse("e1865bb2-e787-407f-95ad-cb8f04bbe891");
 
     /// <summary>
     /// Gets the current plugin instance.
@@ -44,8 +47,8 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
             new PluginPageInfo
             {
                 Name = this.Name,
-                EmbeddedResourcePath = string.Format(CultureInfo.InvariantCulture, "{0}.Configuration.configPage.html", GetType().Namespace)
-            }
+                EmbeddedResourcePath = string.Format(CultureInfo.InvariantCulture, "{0}.Configuration.configPage.html", GetType().Namespace),
+            },
         };
     }
 }

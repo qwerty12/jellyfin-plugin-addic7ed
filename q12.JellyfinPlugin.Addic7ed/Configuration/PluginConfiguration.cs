@@ -1,6 +1,6 @@
 using MediaBrowser.Model.Plugins;
 
-namespace Jellyfin.Plugin.Template.Configuration;
+namespace q12.JellyfinPlugin.Addic7ed.Configuration;
 
 /// <summary>
 /// The configuration options.

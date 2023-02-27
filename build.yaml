@@ -11,6 +11,6 @@ description: >
 category: "General"
 owner: "jellyfin"
 artifacts:
-- "Jellyfin.Plugin.Template.dll"
+- "q12.JellyfinPlugin.Addic7ed.dll"
 changelog: >
   changelog
