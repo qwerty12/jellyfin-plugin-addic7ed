@@ -23,7 +23,7 @@ public static class Firefox
     {
         get
         {
-            if (_exePath != null)
+            if (_exePath is not null)
             {
                 return _exePath;
             }
@@ -43,7 +43,7 @@ public static class Firefox
         // Derived from https://github.com/borisbabic/browser_cookie3
         get
         {
-            if (_profilePath != null)
+            if (_profilePath is not null)
             {
                 return _profilePath;
             }
@@ -65,13 +65,13 @@ public static class Firefox
                 }
 
                 profilePath = parser[sectionName]["Default"];
-                if (profilePath != null)
+                if (profilePath is not null)
                 {
                     break;
                 }
             }
 
-            if (profilePath == null)
+            if (profilePath is null)
             {
                 return null;
             }
@@ -282,7 +282,7 @@ public static class Firefox
 
                 File.Copy(Path.Combine(ProfilePath, "sessionstore-backups", "recovery.jsonlz4"), dbPath, true);
                 var sessionData = JsonSerializer.Deserialize<FxSessionStore>(Convert_JSONLZ4_To_JSON(await File.ReadAllBytesAsync(dbPath, cancel).ConfigureAwait(false)));
-                if (sessionData != null)
+                if (sessionData is not null)
                 {
                     for (var i = 0; i < sessionData.Cookies?.Length; ++i)
                     {
@@ -292,7 +292,7 @@ public static class Firefox
                         }
 
                         var cookie = sessionData.Cookies[i];
-                        if (!cookie.Host.EndsWith(domain, StringComparison.Ordinal)) // 🤷‍♂️
+                        if (!cookie.Host.EndsWith(domain, StringComparison.Ordinal)) // XXX: 🤷‍♂️
                         {
                             continue;
                         }

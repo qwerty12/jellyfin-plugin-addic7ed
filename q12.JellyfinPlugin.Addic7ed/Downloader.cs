@@ -63,7 +63,7 @@ public sealed class Downloader : IDisposable
 
     private async Task<HttpClient> GetHttpClientAsync(CancellationToken cancel = default)
     {
-        if (_httpClient != null)
+        if (_httpClient is not null)
         {
             if (Environment.TickCount64 < _httpClientExpungeTime)
             {
@@ -115,8 +115,6 @@ public sealed class Downloader : IDisposable
                         break;
                     case "PHPSESSID":
                         hasPhpsessid = true;
-                        break;
-                    default:
                         break;
                 }
             }
@@ -178,7 +176,7 @@ public sealed class Downloader : IDisposable
         {
             client?.Dispose();
 
-            if (_httpClientHandler != null)
+            if (_httpClientHandler is not null)
             {
                 _httpClientHandler.Dispose();
                 _httpClientHandler = null;
@@ -303,7 +301,7 @@ public sealed class Downloader : IDisposable
             series.Replace("&", "and", StringComparison.Ordinal),
             series.Replace("and", "&", StringComparison.Ordinal),
         };
-        if (_showIds == null || _showIds.Count == 0)
+        if (_showIds is null || _showIds.Count == 0)
         {
             if (!await ReadCachedShowIdsAsync(cancel).ConfigureAwait(false))
             {
@@ -321,7 +319,7 @@ public sealed class Downloader : IDisposable
 
             int showId;
             var seriesSanitized = Sanitize(serieses, _sanitizeCharacters);
-            if (year != null)
+            if (year is not null)
             {
                 var key = $"{seriesSanitized} {year}";
                 showId = _showIds.GetValueOrDefault(key);
@@ -352,7 +350,7 @@ public sealed class Downloader : IDisposable
 
     public async Task<List<SubtitleEntry>> QueryAsync(int showId, int? season, CancellationToken cancel = default)
     {
-        if (season == null)
+        if (season is null)
         {
             _logger.LogDebug("QueryAsync: season == null");
             return new List<SubtitleEntry>();
@@ -415,7 +413,7 @@ public sealed class Downloader : IDisposable
             }
 
             var dlSelector = cells[9].QuerySelector("a");
-            if (dlSelector == null)
+            if (dlSelector is null)
             {
                 continue;
             }
@@ -429,7 +427,7 @@ public sealed class Downloader : IDisposable
             var hearingImpaired = !string.IsNullOrEmpty(cells[6].TextContent);
             var downloadLinkFragment = dlSelector.GetAttribute("href");
 
-            if (downloadLinkFragment == null)
+            if (downloadLinkFragment is null)
             {
                 continue;
             }
@@ -485,7 +483,7 @@ public sealed class Downloader : IDisposable
             throw new HttpRequestException("Too many requests");
         }
 
-        if (response.Content == null)
+        if (response.Content is null)
         {
             throw new InvalidDataException($"Unable to download subtitle: empty response body for {subtitleUrl}");
         }
@@ -502,13 +500,13 @@ public sealed class Downloader : IDisposable
 
     public void Dispose()
     {
-        if (_httpClient != null)
+        if (_httpClient is not null)
         {
             _httpClient.Dispose();
             _httpClient = null;
         }
 
-        if (_httpClientHandler != null)
+        if (_httpClientHandler is not null)
         {
             _httpClientHandler.Dispose();
             _httpClientHandler = null;

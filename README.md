@@ -1,16 +1,16 @@
 # Unofficial Addic7ed subtitle downloader plugin for Jellyfin
 
-Written for personal use, so lots of (intentional) limitations/bugs:
+Written for personal use, so lots of limitations/bugs (some intentional):
 
 * Downloads English subtitles only
 
-* Only supports episodes and *not* movies
+* Supports episodes only - *not* movies
 
-* There's no configuration to speak of. To log in, you must do so on the Addic7ed site itself with a system-installed version of Firefox on your main profile with no Container. This furthermore means:
+* There's no configuration to speak of. To log in, you must use a system-installed version of Firefox (main profile, no Container) to do so on the Addic7ed site itself. Because of this:
 
-    * this won't work on anything other than Windows
-    
-    * Jellyfin running as a service isn't supported - this assumes Jellyfin is running as the same user as the Firefox instance to pull cookies from
+    * this won't work on anything other than Windows (the cookie extraction code isn't exactly cross-platform)
+
+    * Jellyfin running as a service isn't supported - the plugin assumes Jellyfin is running as the same user as the Firefox instance to pull cookies from
 
 * Subtitles are sorted in the following order: matching release group, matching source (HDTV etc.) and then hearing impaired subtitles are prioritised
 
@@ -20,11 +20,11 @@ Written for personal use, so lots of (intentional) limitations/bugs:
 
     * `Accept-Language` includes `en-GB`
 
-* Requests time out after 10 seconds. Addic7ed's servers tend to be busy and you might need to repeat your request for it to go through. 10 seconds is already too long IMO so I won't raise it
+* Requests time out after 10 seconds, which is already too long, but unfortunately also too short: Addic7ed's servers tend to be busy so you might need to repeat your request for it to go through
 
 * The big list of shows is cached for a week (but requested once a day if a show couldn't be found), a request for a show's season is stored for an hour
 
-    * The HttpClient is meant to be torn down after an hour, this should (hopefully) trigger a recheck on the cap placed on downloading subtitles each time
+    * The HttpClient is meant to be torn down after an hour, this should (hopefully) trigger a recheck on the cap placed on downloading subtitles
 
 * The code is very haphazardly thrown together
 
@@ -41,7 +41,7 @@ Written for personal use, so lots of (intentional) limitations/bugs:
 * The code to read Firefox's cookies was converted from https://github.com/borisbabic/browser_cookie3
 
     * [PeanutButter.INI](https://github.com/fluffynuts/PeanutButter/) is used to read Firefox's profiles.ini
-    
+
     * [SQLitePCL](https://github.com/jellyfin/SQLitePCL.pretty.netstandard) to read cookies.sqlite
 
     * [Lej77's code](https://github.com/piroor/treestyletab/issues/1678#issuecomment-351411816) is used to decompress Fx's jsonlz4 files
