@@ -26,7 +26,19 @@ Written for personal use, so lots of limitations/bugs (some intentional):
 
     * The HttpClient is meant to be torn down after an hour, this should (hopefully) trigger a recheck on the cap placed on downloading subtitles
 
+* Will only operate on manual requests
+
 * The code is very haphazardly thrown together
+
+## Installation
+
+Binaries aren't provided, 'cause this is a WIP, and I don't want my bad code to cause more than one person to hammer Addic7ed's servers.
+
+Nevertheless, if you can build it yourself, do the following to install it:
+
+1. Make a Jellyfin.Plugin.Addic7ed in C:\ProgramData\Jellyfin\Server\plugins\
+
+2. Copy q12.JellyfinPlugin.Addic7ed.dll, PeanutButter.INI.dll and AngleSharp.dll into it
 
 ## Credits
 
@@ -35,8 +47,6 @@ Written for personal use, so lots of limitations/bugs (some intentional):
 * The logic for handling Addic7ed and mapping show names etc. is pretty much from https://github.com/Diaoul/subliminal (and [Bazarr's fork](https://github.com/morpheus65535/bazarr/blob/master/libs/subliminal_patch/))
 
 * The regexes for extracting the release name out of a given filename come from https://github.com/Sonarr/Sonarr/tree/develop/src/NzbDrone.Core/Parser
-
-* The included Base62 implementation is taken from https://github.com/JoyMoe/Base62.Net
 
 * The code to read Firefox's cookies was converted from https://github.com/borisbabic/browser_cookie3
 

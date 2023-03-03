@@ -31,6 +31,11 @@ public class SubtitleProvider : ISubtitleProvider, IDisposable
 
     public async Task<IEnumerable<RemoteSubtitleInfo>> Search(SubtitleSearchRequest request, CancellationToken cancellationToken)
     {
+        if (request.IsAutomated || string.IsNullOrWhiteSpace(request.SeriesName) || !request.ParentIndexNumber.HasValue || !request.IndexNumber.HasValue)
+        {
+            return Enumerable.Empty<RemoteSubtitleInfo>();
+        }
+
         (int id, string matchedTitle) = await _downloader.GetShowIdAsync(request.SeriesName, request.ProductionYear, cancellationToken).ConfigureAwait(false);
         if (cancellationToken.IsCancellationRequested || id == 0)
         {
@@ -54,7 +59,7 @@ public class SubtitleProvider : ISubtitleProvider, IDisposable
             select new RemoteSubtitleInfo()
             {
                 ThreeLetterISOLanguageName = "eng",
-                Id = sub.DownloadLinkFragment.ToBase62(),
+                Id = sub.DownloadLinkFragment.Replace("/", ",", StringComparison.Ordinal),
                 ProviderName = Name,
                 Name = $"{matchedTitle} - {sub.Season:00}x{sub.Episode:00} - {sub.Title}: {sub.Version} ({(sub.HearingImpaired ? "HI " : string.Empty)}{sub.Language})",
                 Format = SubtitleFormat,
@@ -63,14 +68,13 @@ public class SubtitleProvider : ISubtitleProvider, IDisposable
 
     public async Task<SubtitleResponse> GetSubtitles(string id, CancellationToken cancellationToken)
     {
-        string url = Downloader.ServerUrl + id.FromBase62<string>();
+        string url = Downloader.ServerUrl + id.Replace(",", "/", StringComparison.Ordinal);
         _logger.LogDebug("Attempting to download {SubtitleUrl}", url);
+        var stream = new MemoryStream();
+        await _downloader.DownloadSubtitleAsync(url, stream, cancellationToken).ConfigureAwait(false);
         return new SubtitleResponse()
         {
-            Language = "en",
-            Format = SubtitleFormat,
-            IsForced = false,
-            Stream = new MemoryStream(await _downloader.DownloadSubtitleAsync(url, cancellationToken).ConfigureAwait(false)),
+            Language = "en", Format = SubtitleFormat, IsForced = false, Stream = stream,
         };
     }
 

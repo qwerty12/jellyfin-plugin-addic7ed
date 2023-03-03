@@ -456,7 +456,7 @@ public sealed class Downloader : IDisposable
         return subtitles;
     }
 
-    public async Task<byte[]> DownloadSubtitleAsync(string subtitleUrl, CancellationToken cancel = default)
+    public async Task DownloadSubtitleAsync(string subtitleUrl, Stream target, CancellationToken cancel = default)
     {
         if (_downloadedSubtitleCount >= _totalAllowedDownloads)
         {
@@ -495,7 +495,8 @@ public sealed class Downloader : IDisposable
 
         _downloadedSubtitleCount++;
         cancel.ThrowIfCancellationRequested();
-        return await response.Content.ReadAsByteArrayAsync(cancel).ConfigureAwait(false);
+        await response.Content.CopyToAsync(target, cancel).ConfigureAwait(false);
+        target.Position = 0;
     }
 
     public void Dispose()
