@@ -96,7 +96,7 @@ public sealed class Downloader : IDisposable
             client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
             client.DefaultRequestHeaders.Add("Connection", "keep-alive");
             client.DefaultRequestHeaders.Add("TE", "trailers");
-            client.Timeout = TimeSpan.FromSeconds(10);
+            client.Timeout = TimeSpan.FromSeconds(15);
 
             cancel.ThrowIfCancellationRequested();
 
@@ -262,23 +262,22 @@ public sealed class Downloader : IDisposable
             {
                 continue;
             }
-
             var showClean = Sanitize(show.TextContent, _sanitizeCharacters);
-
             showIds[showClean] = showId;
-            var match = _seriesYearRe.Match(show.TextContent);
+
+            var match = _seriesYearRe.Match(show.TextContent); /* **NOT** show_clean as per the original code */
             if (!match.Success || !match.Groups["year"].Success)
             {
                 continue;
             }
-
-            string series = Sanitize(match.Groups["series"].Value, _sanitizeCharacters);
+            var series = Sanitize(match.Groups["series"].Value, _sanitizeCharacters);
             if (!showIds.ContainsKey(series))
             {
                 showIds[series] = showId;
             }
         }
 
+        _logger.LogDebug("Found {ShowIdsCount} show ids", showIds.Count);
         if (showIds.Count == 0)
         {
             throw new ResourceNotFoundException("Addic7ed: No show IDs found!");
@@ -292,6 +291,14 @@ public sealed class Downloader : IDisposable
 
     public async Task<(int Id, string MatchedTitle)> GetShowIdAsync(string series, int? year = null, CancellationToken cancel = default)
     {
+        if (_showIds is null || _showIds.Count == 0)
+        {
+            if (!await ReadCachedShowIdsAsync(cancel).ConfigureAwait(false))
+            {
+                await GetShowIdsAsync(cancel).ConfigureAwait(false);
+            }
+        }
+
         var idsToLookFor = new[]
         {
             series,
@@ -301,13 +308,6 @@ public sealed class Downloader : IDisposable
             series.Replace("&", "and", StringComparison.Ordinal),
             series.Replace("and", "&", StringComparison.Ordinal),
         };
-        if (_showIds is null || _showIds.Count == 0)
-        {
-            if (!await ReadCachedShowIdsAsync(cancel).ConfigureAwait(false))
-            {
-                await GetShowIdsAsync(cancel).ConfigureAwait(false);
-            }
-        }
 
         match_check:
         foreach (var serieses in idsToLookFor)

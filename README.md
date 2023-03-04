@@ -6,27 +6,25 @@ Written for personal use, so lots of limitations/bugs (some intentional):
 
 * Supports episodes only - *not* movies
 
+* Will only operate on manual requests
+
 * There's no configuration to speak of. To log in, you must use a system-installed version of Firefox (main profile, no Container) to do so on the Addic7ed site itself. Because of this:
 
-    * this won't work on anything other than Windows (the cookie extraction code isn't exactly cross-platform)
+    * this won't work on anything other than Windows (the cookie extraction code isn't really cross-platform)
 
     * Jellyfin running as a service isn't supported - the plugin assumes Jellyfin is running as the same user as the Firefox instance to pull cookies from
 
-* Subtitles are sorted in the following order: matching release group, matching source (HDTV etc.) and then hearing impaired subtitles are prioritised
-
-    * For automatic downloads, it's quite likely you'll end up with a mismatching subtitle downloaded. The odds of the file's release group being listed on Addic7ed's subtitle page varies
+* Subtitles are sorted in the following order: matching release group, matching source (HDTV etc.) and then hearing-impaired subtitles are prioritised
 
 * The order of the Request headers is... unique. Detecting requests from this addon, SSL fingerprinting aside, isn't hard
 
     * `Accept-Language` includes `en-GB`
 
-* Requests time out after 10 seconds, which is already too long, but unfortunately also too short: Addic7ed's servers tend to be busy so you might need to repeat your request for it to go through
+* Requests time out after 15 seconds, which is already too long, but unfortunately also too short. As Addic7ed's servers tend to be busy, you might need to repeat your request for it to go through
 
-* The big list of shows is cached for a week (but requested once a day if a show couldn't be found), a request for a show's season is stored for an hour
+* The big list of shows is cached for a week (but requested once a day if a show couldn't be found), and a request for a show's season is stored for an hour
 
-    * The HttpClient is meant to be torn down after an hour, this should (hopefully) trigger a recheck on the cap placed on downloading subtitles
-
-* Will only operate on manual requests
+    * The HttpClient is meant to be torn down after an hour, this should get fresh cookies from your browser and cause a re-check of the download cap
 
 * The code is very haphazardly thrown together
 
@@ -36,7 +34,7 @@ Binaries aren't provided, 'cause this is a WIP, and I don't want my bad code to 
 
 Nevertheless, if you can build it yourself, do the following to install it:
 
-1. Make a Jellyfin.Plugin.Addic7ed in C:\ProgramData\Jellyfin\Server\plugins\
+1. Make a Jellyfin.Plugin.Addic7ed folder in C:\ProgramData\Jellyfin\Server\plugins\
 
 2. Copy q12.JellyfinPlugin.Addic7ed.dll, PeanutButter.INI.dll and AngleSharp.dll into it
 
